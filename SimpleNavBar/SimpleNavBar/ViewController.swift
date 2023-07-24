@@ -42,8 +42,6 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         
         imageView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            imageView.heightAnchor.constraint(equalToConstant: side),
-            imageView.widthAnchor.constraint(equalToConstant: side),
             imageView.trailingAnchor.constraint(equalTo: largeTitleView.trailingAnchor, constant: -marginRight),
             imageView.bottomAnchor.constraint(equalTo: largeTitleView.bottomAnchor, constant: -marginBottom)
         ])
