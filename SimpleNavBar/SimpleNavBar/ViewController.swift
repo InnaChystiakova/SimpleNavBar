@@ -11,11 +11,11 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     
     // MARK: Constraints & properties
     
+    let imageView = UIImageView(image: .init(systemName: "person.crop.circle.fill"))
     let scrollView = UIScrollView()
-    let stackView = UIStackView()
     let side: CGFloat = 36
-    let margin: CGFloat = 18
-    let fontSize: CGFloat = 40
+    let marginRight: CGFloat = 18
+    let marginBottom: CGFloat = 12
 
     // MARK: Lifecycle
     
@@ -23,11 +23,30 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         super.viewDidLoad()
         view.backgroundColor = .white
         title = "Avatar"
+        navigationController?.navigationBar.prefersLargeTitles = true
                 
         setupScrollView()
-        setupStackView()
-        setupAvatar()
         setupImage()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        var largeTitleView = UIView()
+        navigationController?.navigationBar.subviews.forEach({ view in
+            guard view.description.contains("UINavigationBarLargeTitleView") else { return }
+            largeTitleView = view
+        })
+        
+        largeTitleView.addSubview(imageView)
+        
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            imageView.heightAnchor.constraint(equalToConstant: side),
+            imageView.widthAnchor.constraint(equalToConstant: side),
+            imageView.trailingAnchor.constraint(equalTo: largeTitleView.trailingAnchor, constant: -marginRight),
+            imageView.bottomAnchor.constraint(equalTo: largeTitleView.bottomAnchor, constant: -marginBottom)
+        ])
     }
     
     // MARK: Setup
@@ -39,45 +58,22 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         view.addSubview(scrollView)
     }
     
-    func setupStackView() {
-        stackView.frame = CGRect(x: scrollView.frame.origin.x, y: scrollView.frame.origin.y, width: scrollView.frame.size.width, height: 50)
-        stackView.axis = .horizontal
-        stackView.alignment = .center
-        stackView.distribution = .equalCentering
-        stackView.layoutMargins = UIEdgeInsets(top: 0, left: margin, bottom: 0, right: margin)
-        stackView.isLayoutMarginsRelativeArrangement = true
-        scrollView.addSubview(stackView)
-    }
-    
-    func setupAvatar() {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: fontSize, weight: .bold)
-        label.textAlignment = .left
-        label.textColor = .black
-        label.text = "Avatar"
-        stackView.addArrangedSubview(label)
-    }
-    
     func setupImage() {
-        let config = UIImage.SymbolConfiguration(textStyle: .largeTitle)
-        let image = UIImage(systemName: "person.crop.circle.fill", withConfiguration: config)
-        let imageView = UIImageView(image: image)
+        
         imageView.contentMode = .scaleAspectFill
+        imageView.tintColor = .gray
+        
+        var largeTitleView = UIView()
+            navigationController?.navigationBar.subviews.forEach({ view in
+              guard view.description.contains("UINavigationBarLargeTitleView") else { return }
+              largeTitleView = view
+            })
         imageView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             imageView.widthAnchor.constraint(equalToConstant: side),
-            imageView.heightAnchor.constraint(equalToConstant: side)
+            imageView.heightAnchor.constraint(equalToConstant: side),
         ])
-        stackView.addArrangedSubview(imageView)
-    }
-    
-    // MARK: UIScrollViewDelegate
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let offsetY = scrollView.contentOffset.y
-        let dimension = max(stackView.frame.size.height, -offsetY)
-        let delta = dimension + offsetY
-        navigationController?.navigationItem.titleView?.isHidden = (delta == 0) ? true : false
+        largeTitleView.addSubview(imageView)
     }
 }
 
